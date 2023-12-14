@@ -11,7 +11,7 @@
         public List<SourceModuleRepositoryModel>? Repositories { get; set; }
         public string? Priority { get; set; }
         public List<string>? VersionNumbers { get; set; }
-        public string? RecommendedVersion { get; set; }
-        public SourceModuleVersionModel? RecommendedVersionInfo { get; set; }
+        public string? RecommendedVersionNumber { get; set; }
+        public SourceModuleVersionModel? RecommendedVersion { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 using SokuModManager.Models;
 using System.IO.Compression;
 using System.Text.Json;
-using System;
+using SokuModManager.Models.Source;
 
 namespace SokuModManager
 {
@@ -34,8 +34,7 @@ namespace SokuModManager
 
         private readonly string sokuModUpdateTempDirPath = Path.Combine(Path.GetTempPath(), "SokuModUpdate");
 
-        public SourceManager SourceManager { get; set; }
-        public ModManager ModManager { get; set; }
+        private ModManager ModManager { get; set; }
 
         private void ClearUpdateTempDir()
         {
@@ -50,16 +49,14 @@ namespace SokuModManager
             Directory.CreateDirectory(sokuModUpdateTempDirPath);
         }
 
-        public Updater(SourceManager sourceManager, ModManager modManager)
+        public Updater(ModManager modManager)
         {
             ClearUpdateTempDir();
-            SourceManager = sourceManager;
             ModManager = modManager;
         }
 
         public async Task ExecuteUpdates(List<UpdateFileInfoModel> selectedUpdates)
         {
-
             try
             {
                 foreach (var updateFileInfo in selectedUpdates)
@@ -73,7 +70,6 @@ namespace SokuModManager
                 Logger.LogError("Update failed", ex);
             }
         }
-
 
         public static List<UpdateFileInfoModel>? GetUpdateFileInfosFromZip(string path)
         {
@@ -295,6 +291,38 @@ namespace SokuModManager
             }
 
             Directory.Delete(updateWorkingDir, true);
+        }
+
+        public static List<UpdateFileInfoModel>? GetUpdateFileInfosFromSource(SourceModel source)
+        {
+            return source.Modules
+                .Where(x => !string.IsNullOrWhiteSpace(x.RecommendedVersionNumber) && x.RecommendedVersion != null)
+                .Select(module =>
+                {
+                    UpdateFileInfoModel newUpdateFileInfoModel = new()
+                    {
+                        Name = module.Name,
+                        Description = module.Description,
+                        DescriptionI18n = module.DescriptionI18n,
+                        Version = module.RecommendedVersionNumber,
+                        Notes = module.RecommendedVersion?.Notes ?? "",
+                        NotesI18n = module.RecommendedVersion?.NotesI18n,
+                        FileName = module.RecommendedVersion?.Main ?? "",
+                        ConfigFiles = module.RecommendedVersion?.ConfigFiles,
+                        DownloadLinks = module.RecommendedVersion?.DownloadLinks,
+                        Compressed = true,
+                        UpdateWorkingDir = $"./{module.Name.ToLower()}",
+                        Icon = module.Icon,
+                        Banner = module.Banner
+                    };
+
+                    newUpdateFileInfoModel.DownloadLinks = newUpdateFileInfoModel.DownloadLinks?
+                        .OrderByDescending(link => link.Type == source.PreferredDownloadLinkType)
+                        .ToList();
+
+                    return newUpdateFileInfoModel;
+                })
+                .ToList();
         }
 
         private static void CopyDirectory(string sourceDir, string destinationDir, bool recursive = true)

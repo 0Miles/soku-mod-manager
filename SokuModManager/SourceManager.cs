@@ -16,7 +16,7 @@ namespace SokuModManager
 
         public async Task FetchSources()
         {
-            Sources = sourceConfigs.Select(x => new SourceModel { Name = x.Name ?? "", Url = x.Url ?? "" }).ToList();
+            Sources = sourceConfigs.Select(x => new SourceModel { Name = x.Name ?? "", Url = x.Url ?? "", PreferredDownloadLinkType = x.PreferredDownloadLinkType }).ToList();
 
 
             foreach (var source in Sources)
@@ -46,9 +46,9 @@ namespace SokuModManager
                                         modInfo.Icon = moduleSummary.Icon;
                                         modInfo.Banner = moduleSummary.Banner;
 
-                                        if (modInfo.RecommendedVersion != null)
+                                        if (modInfo.RecommendedVersionNumber != null)
                                         {
-                                            modInfo.RecommendedVersionInfo = await FetchModuleVersionInfo(source, modInfo.Name, modInfo.RecommendedVersion);
+                                            modInfo.RecommendedVersion = await FetchModuleVersionInfo(source, modInfo.Name, modInfo.RecommendedVersionNumber);
                                         }
 
 

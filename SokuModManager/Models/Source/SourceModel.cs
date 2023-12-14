@@ -6,5 +6,6 @@
         public string Url { get; set; } = "";
         public List<SourceModuleSummaryModel> ModuleSummaries { get; set; } = new();
         public List<SourceModuleModel> Modules { get; set; } = new();
+        public string PreferredDownloadLinkType { get; set; } = "github";
     }
 }

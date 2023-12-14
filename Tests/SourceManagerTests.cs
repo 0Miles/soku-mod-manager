@@ -1,10 +1,5 @@
 ﻿using SokuModManager.Models.Source;
 using SokuModManager;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tests
 {
@@ -42,9 +37,9 @@ namespace Tests
             Assert.IsNotNull(exampleModule.VersionNumbers);
             Assert.AreEqual(3, exampleModule.VersionNumbers.Count);
 
-            // Assert RecommendedVersionInfo for "example" module
-            Assert.IsNotNull(exampleModule.RecommendedVersionInfo);
-            Assert.AreEqual(exampleModule.RecommendedVersion, exampleModule.RecommendedVersionInfo.Version);
+            // Assert RecommendedVersion for "example" module
+            Assert.IsNotNull(exampleModule.RecommendedVersion);
+            Assert.AreEqual(exampleModule.RecommendedVersionNumber, exampleModule.RecommendedVersion.Version);
 
             // Assert DownloadModuleImageFiles for "example" module
             string tmpSourceFolder = Path.Combine(sourceManager.SokuModSourceTempDirPath, "ExampleSource");
