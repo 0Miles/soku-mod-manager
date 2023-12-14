@@ -12,7 +12,7 @@ namespace Tests
             // Arrange
             var sourceConfigs = new List<SourceConfigModel>
             {
-                new SourceConfigModel { Name = "ExampleSource", Url = "http://example.soku.latte.today/" }
+                new SourceConfigModel { Name = "TestSource", Url = "https://sokuexample.github.io/testsource/" }
             };
 
             var sourceManager = new SourceManager(sourceConfigs);
@@ -25,38 +25,57 @@ namespace Tests
             Assert.IsNotNull(sources);
             Assert.AreEqual(1, sources.Count);
 
-            var exampleSource = sources.FirstOrDefault(x => x.Name == "ExampleSource");
+            var testSource = sources.FirstOrDefault(x => x.Name == "TestSource");
 
-            Assert.IsNotNull(exampleSource);
-            Assert.IsNotNull(exampleSource.ModuleSummaries);
-            Assert.IsNotNull(exampleSource.Modules);
+            Assert.IsNotNull(testSource);
+            Assert.IsNotNull(testSource.ModuleSummaries);
+            Assert.IsNotNull(testSource.Modules);
 
-            // Assert Module Info for "example" module
-            var exampleModule = exampleSource.Modules.FirstOrDefault(x => x.Name.ToLower() == "example");
-            Assert.IsNotNull(exampleModule);
-            Assert.IsNotNull(exampleModule.VersionNumbers);
-            Assert.AreEqual(3, exampleModule.VersionNumbers.Count);
 
-            // Assert RecommendedVersion for "example" module
-            Assert.IsNotNull(exampleModule.RecommendedVersion);
-            Assert.AreEqual(exampleModule.RecommendedVersionNumber, exampleModule.RecommendedVersion.Version);
+            var normalModule = testSource.Modules.FirstOrDefault(x => x.Name == "Normal");
+            var noVersionModule = testSource.Modules.FirstOrDefault(x => x.Name == "NoVersionMod");
+            var negativePriorityTestModule = testSource.Modules.FirstOrDefault(x => x.Name == "NegativePriorityTest");
+            var highPriorityTestModule = testSource.Modules.FirstOrDefault(x => x.Name == "HighPriorityTest");
+            var badDownloadLinkTestModule = testSource.Modules.FirstOrDefault(x => x.Name == "BadDownloadLinkTest");
+            Assert.IsNotNull(normalModule);
+            Assert.IsNotNull(noVersionModule);
+            Assert.IsNotNull(negativePriorityTestModule);
+            Assert.IsNotNull(highPriorityTestModule);
+            Assert.IsNotNull(badDownloadLinkTestModule);
+
+
+            Assert.IsNotNull(normalModule.VersionNumbers);
+            Assert.IsNotNull(negativePriorityTestModule.VersionNumbers);
+            Assert.IsNotNull(highPriorityTestModule.VersionNumbers);
+            Assert.IsNotNull(badDownloadLinkTestModule.VersionNumbers);
+            Assert.AreEqual(1, normalModule.VersionNumbers.Count);
+            Assert.AreEqual(1, negativePriorityTestModule.VersionNumbers.Count);
+            Assert.AreEqual(1, highPriorityTestModule.VersionNumbers.Count);
+            Assert.AreEqual(1, badDownloadLinkTestModule.VersionNumbers.Count);
+            Assert.IsNull(noVersionModule.VersionNumbers);
+
+            Assert.IsNotNull(normalModule.RecommendedVersion);
+            Assert.AreEqual(normalModule.RecommendedVersionNumber, normalModule.RecommendedVersion.Version);
+            Assert.IsNotNull(negativePriorityTestModule.RecommendedVersion);
+            Assert.AreEqual(negativePriorityTestModule.RecommendedVersionNumber, normalModule.RecommendedVersion.Version);
+            Assert.IsNotNull(highPriorityTestModule.RecommendedVersion);
+            Assert.AreEqual(highPriorityTestModule.RecommendedVersionNumber, normalModule.RecommendedVersion.Version);
+            Assert.IsNotNull(badDownloadLinkTestModule.RecommendedVersion);
+            Assert.AreEqual(badDownloadLinkTestModule.RecommendedVersionNumber, normalModule.RecommendedVersion.Version);
 
             // Assert DownloadModuleImageFiles for "example" module
             string tmpSourceFolder = Path.Combine(sourceManager.SokuModSourceTempDirPath, "ExampleSource");
-            string tmpModuleFolder = Path.Combine(tmpSourceFolder, "example");
 
-            Assert.IsTrue(File.Exists(Path.Combine(tmpModuleFolder, "banner.jpg")));
-            Assert.IsTrue(File.Exists(Path.Combine(tmpModuleFolder, "icon.png")));
-
-            // Assert Module Info for "example2" module
-            var example2Module = exampleSource.ModuleSummaries.FirstOrDefault(x => x.Name == "example2");
-            Assert.IsNotNull(example2Module);
-
-            // Assert DownloadModuleImageFiles for "example2" module
-            tmpModuleFolder = Path.Combine(tmpSourceFolder, "example2");
-
-            Assert.IsTrue(File.Exists(Path.Combine(tmpModuleFolder, "banner.jpg")));
-            Assert.IsTrue(File.Exists(Path.Combine(tmpModuleFolder, "icon.gif")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "Normal"), "banner.png")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "Normal"), "icon.jpg")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "NoVersionMod"), "banner.png")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "NoVersionMod"), "icon.png")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "NegativePriorityTest"), "banner.jpg")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "NegativePriorityTest"), "icon.gif")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "HighPriorityTest"), "banner.png")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "HighPriorityTest"), "icon.jpg")));
+            Assert.IsFalse(Directory.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "BadDownloadLinkTest"))));
+            Assert.IsFalse(Directory.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "BadDownloadLinkTest"))));
         }
     }
 
