@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SokuModManager", "SokuModManager\SokuModManager.csproj", "{336808F7-5AF1-41FE-99E7-2C899882F9DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{FD2185B5-E750-4989-B631-81D7A805C1EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{336808F7-5AF1-41FE-99E7-2C899882F9DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{336808F7-5AF1-41FE-99E7-2C899882F9DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{336808F7-5AF1-41FE-99E7-2C899882F9DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{336808F7-5AF1-41FE-99E7-2C899882F9DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD2185B5-E750-4989-B631-81D7A805C1EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD2185B5-E750-4989-B631-81D7A805C1EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD2185B5-E750-4989-B631-81D7A805C1EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD2185B5-E750-4989-B631-81D7A805C1EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {73D33680-030D-439B-867D-F8CCF35E4355}
+	EndGlobalSection
+EndGlobal
