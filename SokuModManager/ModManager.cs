@@ -21,8 +21,8 @@ namespace SokuModManager
 
         public ModManager(string? sokuDirFullPath = null)
         {
-            this.sokuDirFullPath = Path.GetFullPath(sokuDirFullPath ?? "", Common.ExecutableDir);
-            DefaultModsDir = Path.GetFullPath("modules", this.sokuDirFullPath);
+            this.sokuDirFullPath = sokuDirFullPath ?? Common.ExecutableDir;
+            DefaultModsDir = Path.Combine(this.sokuDirFullPath, "modules");
         }
 
         private ModInfoModel? GetModInfo(string dllFilePath)
