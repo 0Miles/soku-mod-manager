@@ -1,26 +1,39 @@
-﻿using Serilog;
-
-namespace SokuModManager
+﻿namespace SokuModManager
 {
     public class Logger
     {
-        private static readonly ILogger _logger;
+        private static readonly string LogFilePath = "log.txt";
 
         static Logger()
         {
-            _logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .CreateLogger();
+            if (!File.Exists(LogFilePath))
+            {
+                File.Create(LogFilePath).Close();
+            }
         }
 
         public static void LogInformation(string message)
         {
-            _logger.Information(message);
+            LogMessage($"[Information] {DateTime.Now}: {message}");
         }
 
         public static void LogError(string message, Exception ex)
         {
-            _logger.Error(ex, message);
+            LogMessage($"[Error] {DateTime.Now}: {message}\nException: {ex}");
+        }
+
+        private static void LogMessage(string logEntry)
+        {
+            try
+            {
+                Console.WriteLine(logEntry);
+                using StreamWriter writer = File.AppendText(LogFilePath);
+                writer.WriteLine(logEntry);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed to write to log file. Error: {e}");
+            }
         }
     }
 }
