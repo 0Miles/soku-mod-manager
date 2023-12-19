@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SokuModManager", "SokuModManager\SokuModManager.csproj", "{336808F7-5AF1-41FE-99E7-2C899882F9DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SokuModManager", "SokuModManager\SokuModManager.csproj", "{336808F7-5AF1-41FE-99E7-2C899882F9DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{FD2185B5-E750-4989-B631-81D7A805C1EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{FD2185B5-E750-4989-B631-81D7A805C1EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "Example\Example.csproj", "{60BA54BC-512C-41FB-B84F-8C9C1D28F8F7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{336808F7-5AF1-41FE-99E7-2C899882F9DB} = {336808F7-5AF1-41FE-99E7-2C899882F9DB}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{FD2185B5-E750-4989-B631-81D7A805C1EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD2185B5-E750-4989-B631-81D7A805C1EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD2185B5-E750-4989-B631-81D7A805C1EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60BA54BC-512C-41FB-B84F-8C9C1D28F8F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60BA54BC-512C-41FB-B84F-8C9C1D28F8F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60BA54BC-512C-41FB-B84F-8C9C1D28F8F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60BA54BC-512C-41FB-B84F-8C9C1D28F8F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -160,6 +160,7 @@ namespace SokuModManager
             catch (Exception ex)
             {
                 Logger.LogError("Refresh available failed", ex);
+                throw;
             }
         }
 
@@ -246,6 +247,7 @@ namespace SokuModManager
             catch (Exception ex)
             {
                 Logger.LogError(string.Format("Failed to download {0}", updateFileInfo.FileName), ex);
+                throw;
             }
         }
 
