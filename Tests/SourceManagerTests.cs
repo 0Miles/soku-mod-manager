@@ -12,7 +12,7 @@ namespace Tests
             // Arrange
             var sourceConfigs = new List<SourceConfigModel>
             {
-                new SourceConfigModel { Name = "TestSource", Url = "https://sokuexample.github.io/testsource/" }
+                new() { Name = "TestSource", Url = "https://sokuexample.github.io/testsource/" }
             };
 
             var sourceManager = new SourceManager(sourceConfigs);
@@ -64,7 +64,7 @@ namespace Tests
             Assert.AreEqual(badDownloadLinkTestModule.RecommendedVersionNumber, normalModule.RecommendedVersion.Version);
 
             // Assert DownloadModuleImageFiles for "example" module
-            string tmpSourceFolder = Path.Combine(sourceManager.SokuModSourceTempDirPath, "ExampleSource");
+            string tmpSourceFolder = Path.Combine(sourceManager.SokuModSourceTempDirPath, "TestSource");
 
             Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "Normal"), "banner.png")));
             Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "Normal"), "icon.jpg")));
@@ -74,8 +74,8 @@ namespace Tests
             Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "NegativePriorityTest"), "icon.gif")));
             Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "HighPriorityTest"), "banner.png")));
             Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "HighPriorityTest"), "icon.jpg")));
-            Assert.IsFalse(Directory.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "BadDownloadLinkTest"))));
-            Assert.IsFalse(Directory.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "BadDownloadLinkTest"))));
+            Assert.IsFalse(Directory.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "BadDownloadLinkTest"), "banner.png")));
+            Assert.IsFalse(Directory.Exists(Path.Combine(Path.Combine(tmpSourceFolder, "BadDownloadLinkTest"), "icon.png")));
         }
     }
 

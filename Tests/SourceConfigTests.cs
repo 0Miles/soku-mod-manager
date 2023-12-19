@@ -12,14 +12,14 @@ namespace Tests
 
             sourceConfig.ClearSource();
 
-            var sourceUrl = "https://github.com/example/repo.git";
+            var sourceUrl = "https://sokuexample.github.io/testsource/";
 
             sourceConfig.AddSource(sourceUrl);
             var configs = sourceConfig.GetSourceConfigs();
 
             Assert.IsNotNull(configs);
             Assert.AreEqual(1, configs.Count);
-            Assert.AreEqual("repo", configs[0].Name);
+            Assert.AreEqual("testsource", configs[0].Name);
         }
 
         [TestMethod]
@@ -29,17 +29,17 @@ namespace Tests
             var sourceConfig = new SourceConfig();
             sourceConfig.ClearSource();
 
-            sourceConfig.AddSource("https://github.com/example/repo.git");
-            sourceConfig.AddSource("https://github.com/example/repo.git");
+            sourceConfig.AddSource("https://sokuexample.github.io/testsource/");
+            sourceConfig.AddSource("https://sokuexample.github.io/testsource/");
 
             // Act
-            sourceConfig.RemoveSource("repo");
+            sourceConfig.RemoveSource("testsource");
             var configs = sourceConfig.GetSourceConfigs();
 
             // Assert
             Assert.IsNotNull(configs);
             Assert.AreEqual(1, configs.Count);
-            Assert.AreEqual("repo1", configs[0].Name);
+            Assert.AreEqual("testsource1", configs[0].Name);
         }
     }
 }

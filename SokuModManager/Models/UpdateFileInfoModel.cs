@@ -26,11 +26,6 @@ namespace SokuModManager.Models
         public bool Installed { get; set; }
         public string LocalFileVersion { get; set; } = "";
         public string LocalFileName { get; set; } = "";
-        public string LocalFileDir {
-            get
-            {
-                return Path.GetDirectoryName(LocalFileName) ?? "";
-            }
-        }
+        public string LocalFileDir { get; set; } = "";
     }
 }

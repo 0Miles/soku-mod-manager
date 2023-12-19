@@ -19,15 +19,15 @@ namespace SokuModManager
         public string DefaultModsDir { get; private set; }
         public bool SWRSToysD3d9Exist { get { return File.Exists(Path.Combine(sokuDirFullPath, "d3d9.dll")); } }
 
-        public ModManager(string sokuDirFullPath)
+        public ModManager(string? sokuDirFullPath = null)
         {
-            this.sokuDirFullPath = sokuDirFullPath;
-            DefaultModsDir = Path.Combine(sokuDirFullPath, "modules");
+            this.sokuDirFullPath = Path.GetFullPath(sokuDirFullPath ?? "", Common.ExecutableDir);
+            DefaultModsDir = Path.GetFullPath("modules", this.sokuDirFullPath);
         }
 
         private ModInfoModel? GetModInfo(string dllFilePath)
         {
-            var dirName = Path.GetDirectoryName(dllFilePath) ?? "";
+            var dirName = Path.GetDirectoryName(dllFilePath)!;
             var fullPath = dllFilePath;
             var relativePath = Common.GetRelativePath(dllFilePath, sokuDirFullPath);
 
@@ -95,7 +95,7 @@ namespace SokuModManager
             else
             {
                 string modName = Path.GetFileNameWithoutExtension(fileName);
-                string modDir = Path.GetDirectoryName(fileName) ?? "";
+                string modDir = Path.GetDirectoryName(fileName)!;
                 string modVersionFileName = Path.Combine(modDir, $"{modName}{MOD_VERSION_FILENAME_SUFFIX}");
 
                 if (File.Exists(modVersionFileName))
@@ -166,7 +166,7 @@ namespace SokuModManager
 
                     foreach (var module in modLoaderSettings?.Modules ?? new())
                     {
-                        string fullPath = Path.Combine(sokuDirFullPath, module.Key.Trim().Replace('/', '\\'));
+                        string fullPath = Path.Combine(sokuDirFullPath, module.Key.Trim().Replace('/', Path.DirectorySeparatorChar));
                         if (!File.Exists(fullPath))
                         {
                             continue;
@@ -284,7 +284,7 @@ namespace SokuModManager
             var modInfo = GetModInfoByModName(modName);
             if (modInfo != null)
             {
-                string iniFilePath = Path.Combine(modInfo.DirName, modIniSetting.FileName ?? "");
+                string iniFilePath = Path.Combine(modInfo.DirName, modIniSetting.FileName!);
                 if (File.Exists(iniFilePath))
                 {
                     IniFile iniFile = new(iniFilePath);
@@ -322,6 +322,20 @@ namespace SokuModManager
                 writer.WriteLine((modInfo.Enabled ? "" : ";") + $"{modInfo.Name}={modInfo.RelativePath}");
             }
             writer.Close();
+        }
+
+        public void AddModToBeDeleted(ModInfoModel modInfo)
+        {
+            ToBeDeletedDirList.Add(modInfo.DirName);
+        }
+
+        public void AddModToBeDeleted(string modName)
+        {
+            var modInfo = GetModInfoByModName(modName);
+            if (modInfo != null)
+            {
+                ToBeDeletedDirList.Add(modInfo.DirName);
+            }
         }
 
         public void ExecuteDelete()

@@ -55,20 +55,35 @@ namespace SokuModManager
             ModManager = modManager;
         }
 
-        public async Task ExecuteUpdates(List<UpdateFileInfoModel> selectedUpdates)
+        public async Task<List<UpdateResultModel>> ExecuteUpdates(List<UpdateFileInfoModel> selectedUpdates)
         {
-            try
+            var results = new List<UpdateResultModel>();
+            foreach (var updateFileInfo in selectedUpdates)
             {
-                foreach (var updateFileInfo in selectedUpdates)
+                try
                 {
                     await DownloadAndExtractFile(updateFileInfo);
                     CopyAndReplaceFile(updateFileInfo);
+                    results.Add(new UpdateResultModel
+                    {
+                        Name = updateFileInfo.Name,
+                        Success = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("Update failed", ex);
+
+                    results.Add(new UpdateResultModel
+                    {
+                        Name = updateFileInfo.Name,
+                        Success = false,
+                        Message = ex.Message
+                    });
                 }
             }
-            catch (Exception ex)
-            {
-                Logger.LogError("Update failed", ex);
-            }
+
+            return results;
         }
 
         public static List<UpdateFileInfoModel>? GetUpdateFileInfosFromZip(string path)
@@ -113,10 +128,12 @@ namespace SokuModManager
                     if (modInfo == null || !File.Exists(modInfo.FullPath))
                     {
                         updateFileInfo.Installed = false;
+                        updateFileInfo.LocalFileDir = Path.Combine(ModManager.DefaultModsDir, updateFileInfo.Name);
                     }
                     else
                     {
                         updateFileInfo.LocalFileName = modInfo.FullPath;
+                        updateFileInfo.LocalFileDir = Path.GetDirectoryName(modInfo.FullPath)!;
                         updateFileInfo.LocalFileVersion = modInfo.Version;
                         updateFileInfo.Icon = modInfo.Icon;
                         updateFileInfo.Installed = true;
@@ -148,13 +165,13 @@ namespace SokuModManager
 
                 if (updateFileInfo.FromLocalArchive)
                 {
-                    string localArchiveName = Path.GetFileNameWithoutExtension(updateFileInfo.LocalArchiveUri ?? "");
+                    string localArchiveName = Path.GetFileNameWithoutExtension(updateFileInfo.LocalArchiveUri!);
                     updateFileDir = Path.Combine(sokuModUpdateTempDirPath, localArchiveName);
                     if (Directory.Exists(updateFileDir))
                     {
                         return;
                     }
-                    downloadUri = updateFileInfo.LocalArchiveUri ?? "";
+                    downloadUri = updateFileInfo.LocalArchiveUri!;
                 }
                 else
                 {
@@ -175,43 +192,38 @@ namespace SokuModManager
                 using HttpClient client = new();
                 client.Timeout = TimeSpan.FromMinutes(10);
 
-                var response = await client.GetAsync(downloadUri, HttpCompletionOption.ResponseHeadersRead);
+                using HttpResponseMessage response = await client.GetAsync(downloadUri, HttpCompletionOption.ResponseHeadersRead);
+                // 確認回應狀態碼為成功
+                response.EnsureSuccessStatusCode();
 
-                using var fileStream = new FileStream(downloadToTempFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                var totalSize = response.Content.Headers.ContentLength ?? -1L;
-                var readSoFar = 0L;
-                var buffer = new byte[4096];
-                var isMoreToRead = true;
-
-                OnUpdaterStatusChanged(new UpdaterStatusChangedEventArgs
+                // 確認 Content Headers 中有 Content-Length，以確定進度
+                if (response.Content.Headers.TryGetValues("Content-Length", out var contentLengthValues))
                 {
-                    Status = UpdaterStatus.Pending
-                });
+                    long totalBytes = long.Parse(contentLengthValues?.First() ?? "0");
+                    long downloadedBytes = 0;
 
-                using var contentStream = await response.Content.ReadAsStreamAsync();
-                do
-                {
-                    var bytesRead = await contentStream.ReadAsync(buffer);
-                    if (bytesRead == 0)
+                    // 開啟目標檔案，並使用 Response Content 中的資料寫入
+                    using FileStream fileStream = File.OpenWrite(downloadToTempFilePath);
+                    using Stream contentStream = await response.Content.ReadAsStreamAsync();
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+
+                    // 逐步讀取和寫入檔案
+                    while ((bytesRead = await contentStream.ReadAsync(buffer)) > 0)
                     {
-                        isMoreToRead = false;
-                        continue;
+                        await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                        downloadedBytes += bytesRead;
+
+                        // 這裡可以觸發進度更新事件
+                        int progressPercentage = (int)((double)downloadedBytes / totalBytes * 100);
+                        OnUpdaterStatusChanged(new UpdaterStatusChangedEventArgs
+                        {
+                            Status = UpdaterStatus.Downloading,
+                            Target = updateFileInfo.Name,
+                            Progress = progressPercentage
+                        });
                     }
-
-                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
-
-                    readSoFar += bytesRead;
-
-                    var progressPercentage = (int)((readSoFar * 1.0 / totalSize) * 100);
-
-                    OnUpdaterStatusChanged(new UpdaterStatusChangedEventArgs
-                    {
-                        Status = UpdaterStatus.Downloading,
-                        Target = updateFileInfo.Name,
-                        Progress = progressPercentage
-                    });
-                } while (isMoreToRead);
-
+                }
 
                 if (updateFileInfo.Compressed)
                 {
@@ -223,7 +235,6 @@ namespace SokuModManager
                     ZipFile.ExtractToDirectory(downloadToTempFilePath, updateFileDir);
                     File.Delete(downloadToTempFilePath);
                 }
-
             }
             catch (Exception ex)
             {
@@ -241,7 +252,7 @@ namespace SokuModManager
             string updateFileDir;
             if (updateFileInfo.FromLocalArchive)
             {
-                string localArchiveName = Path.GetFileNameWithoutExtension(updateFileInfo.LocalArchiveUri ?? "");
+                string localArchiveName = Path.GetFileNameWithoutExtension(updateFileInfo.LocalArchiveUri!);
                 updateFileDir = Path.Combine(sokuModUpdateTempDirPath, localArchiveName);
             }
             else
@@ -262,7 +273,7 @@ namespace SokuModManager
                 {
                     string localFileName = Path.Combine(updateFileInfo.LocalFileDir, fileName);
                     string tempFileName = Path.Combine(updateWorkingDir, fileName);
-                    string tempFileDir = Path.GetDirectoryName(fileName) ?? "";
+                    string tempFileDir = Path.GetDirectoryName(fileName)!;
 
                     if (File.Exists(localFileName))
                     {
@@ -278,9 +289,9 @@ namespace SokuModManager
                 string newVersionFileName = Path.Combine(updateWorkingDir, updateFileInfo.FileName);
                 if (File.Exists(newVersionFileName))
                 {
-                    if (updateFileInfo.FileName.ToLower() != Path.GetFileName(updateFileInfo.LocalFileName)?.ToLower())
+                    if (!string.IsNullOrWhiteSpace(updateFileInfo.LocalFileName) && updateFileInfo.FileName.ToLower() != Path.GetFileName(updateFileInfo.LocalFileName)?.ToLower())
                     {
-                        File.Move(newVersionFileName, Path.Combine(updateWorkingDir, Path.GetFileName(updateFileInfo.LocalFileName)));
+                        File.Move(newVersionFileName, Path.Combine(updateWorkingDir, Path.GetFileName(updateFileInfo.LocalFileName)), true);
                     }
                     CopyDirectory(updateWorkingDir, updateFileInfo.LocalFileDir);
                 }

@@ -21,12 +21,12 @@ namespace SokuModManager
 
         public string GetRecommendedSourceNameByUrl(string sourceUrl)
         {
-            var regex = new Regex("https:\\/\\/(github|gitee)\\.com\\/([^/]*)\\/([^/]+?)(?:\\.git)?$");
+            var regex = new Regex("http(?:s?):\\/\\/([^/]+?)\\.github\\.io\\/([^/]+)");
             var match = regex.Match(sourceUrl);
             string? recommendName;
             if (match.Success)
             {
-                recommendName = match.Groups[3].Value;
+                recommendName = match.Groups[2].Value;
             }
             else
             {
