@@ -1,6 +1,6 @@
 # SokuModManager
 
-SokuModManager is a library designed for managing Mods(SWRSToys) for Hisoutensoku, providing classes for handling mod configurations and sources.
+SokuModManager is a library for managing Hisoutensoku Mods (SWRSToys), providing classes for handling Mods and Mod source configuration.
 
 ## Classes
 - [SourceConfig](./docs/zh-Hans/SourceConfig.md)  
