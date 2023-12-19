@@ -130,6 +130,7 @@ namespace SokuModManager
                     }
 
                     ModManager.Refresh();
+                    ModManager.LoadSWRSToysSetting();
                     var modInfo = ModManager.GetModInfoByModName(updateFileInfo.Name) ?? ModManager.GetModInfoByModFileName(updateFileInfo.FileName);
                     if (modInfo == null || !File.Exists(modInfo.FullPath))
                     {
