@@ -14,7 +14,7 @@ namespace SokuModManager
 
         public List<ModInfoModel> ModInfoList { get; private set; } = new();
 
-        public List<string> ToBeDeletedDirList = new();
+        public List<string> ToBeDeletedDirList { get; private set; } = new();
 
         public string DefaultModsDir { get; private set; }
         public bool SWRSToysD3d9Exist { get { return File.Exists(Path.Combine(sokuDirFullPath, "d3d9.dll")); } }
@@ -127,7 +127,7 @@ namespace SokuModManager
             return new Version(major, minor, build, revision);
         }
 
-        public void SearchModulesDir()
+        public void Refresh()
         {
             ModInfoList.Clear();
             ToBeDeletedDirList.Clear();

@@ -156,7 +156,7 @@ namespace SokuModManager
             }
         }
 
-        public async Task DownloadAndExtractFile(UpdateFileInfoModel updateFileInfo)
+        private async Task DownloadAndExtractFile(UpdateFileInfoModel updateFileInfo)
         {
             try
             {
@@ -242,7 +242,7 @@ namespace SokuModManager
             }
         }
 
-        public void CopyAndReplaceFile(UpdateFileInfoModel updateFileInfo)
+        private void CopyAndReplaceFile(UpdateFileInfoModel updateFileInfo)
         {
             OnUpdaterStatusChanged(new UpdaterStatusChangedEventArgs
             {

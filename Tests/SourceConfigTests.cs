@@ -10,12 +10,12 @@ namespace Tests
         {
             var sourceConfig = new SourceConfig();
 
-            sourceConfig.ClearSource();
+            sourceConfig.Clear();
 
             var sourceUrl = "https://sokuexample.github.io/testsource/";
 
             sourceConfig.AddSource(sourceUrl);
-            var configs = sourceConfig.GetSourceConfigs();
+            var configs = sourceConfig.ConfigList;
 
             Assert.IsNotNull(configs);
             Assert.AreEqual(1, configs.Count);
@@ -27,14 +27,14 @@ namespace Tests
         {
             // Arrange
             var sourceConfig = new SourceConfig();
-            sourceConfig.ClearSource();
+            sourceConfig.Clear();
 
             sourceConfig.AddSource("https://sokuexample.github.io/testsource/");
             sourceConfig.AddSource("https://sokuexample.github.io/testsource/");
 
             // Act
             sourceConfig.RemoveSource("testsource");
-            var configs = sourceConfig.GetSourceConfigs();
+            var configs = sourceConfig.ConfigList;
 
             // Assert
             Assert.IsNotNull(configs);

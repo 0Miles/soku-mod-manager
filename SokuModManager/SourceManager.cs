@@ -5,7 +5,7 @@ namespace SokuModManager
 {
     public class SourceManager
     {
-        public List<SourceModel> Sources { get; private set; } = new();
+        public List<SourceModel> SourceList { get; private set; } = new();
         public readonly string SokuModSourceTempDirPath = Path.Combine(Path.GetTempPath(), "SokuModSource");
         private readonly List<SourceConfigModel> sourceConfigs;
 
@@ -14,12 +14,12 @@ namespace SokuModManager
             this.sourceConfigs = sourceConfigs;
         }
 
-        public async Task FetchSources()
+        public async Task FetchSourceList()
         {
-            Sources = sourceConfigs.Select(x => new SourceModel { Name = x.Name ?? "", Url = x.Url ?? "", PreferredDownloadLinkType = x.PreferredDownloadLinkType }).ToList();
+            SourceList = sourceConfigs.Select(x => new SourceModel { Name = x.Name ?? "", Url = x.Url ?? "", PreferredDownloadLinkType = x.PreferredDownloadLinkType }).ToList();
 
 
-            foreach (var source in Sources)
+            foreach (var source in SourceList)
             {
                 if (source.Url == null) continue;
 

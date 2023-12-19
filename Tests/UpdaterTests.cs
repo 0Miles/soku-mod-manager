@@ -32,9 +32,9 @@ namespace Tests
             };
 
             SourceManager sourceManager = new(sourceConfigs);
-            await sourceManager.FetchSources();
+            await sourceManager.FetchSourceList();
 
-            var updateFileInfos = Updater.GetUpdateFileInfosFromSource(sourceManager.Sources[0]);
+            var updateFileInfos = Updater.GetUpdateFileInfosFromSource(sourceManager.SourceList[0]);
             
             updater.RefreshAvailable(updateFileInfos!);
             await updater.ExecuteUpdates(updater.AvailableInstallList);

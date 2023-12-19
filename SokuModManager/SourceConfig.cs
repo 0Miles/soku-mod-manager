@@ -7,16 +7,11 @@ namespace SokuModManager
     public class SourceConfig
     {
         private const string SOURCE_FILE_NAME = "sources.json";
-        private List<SourceConfigModel> sourceConfigs = new();
+        public List<SourceConfigModel> ConfigList { get; private set; } = new();
 
         public SourceConfig()
         {
-            RefreshSourceConfigs();
-        }
-
-        public List<SourceConfigModel> GetSourceConfigs()
-        {
-            return sourceConfigs;
+            Refresh();
         }
 
         public string GetRecommendedSourceNameByUrl(string sourceUrl)
@@ -37,7 +32,7 @@ namespace SokuModManager
 
         public string GetSafeSourceName(string sourceName)
         {
-            if (sourceConfigs.Any(x => x.Name == sourceName))
+            if (ConfigList.Any(x => x.Name == sourceName))
             {
                 var match = new Regex("^(.*?)(\\d+)?$").Match(sourceName);
                 string name = match.Groups[1].Value;
@@ -61,10 +56,10 @@ namespace SokuModManager
 
         public void AddSource(SourceConfigModel newSource)
         {
-            if (!sourceConfigs.Contains(newSource))
+            if (!ConfigList.Contains(newSource))
             {
-                sourceConfigs.Add(newSource);
-                SaveSourceConfigs();
+                ConfigList.Add(newSource);
+                Save();
             }
             else
             {
@@ -74,11 +69,11 @@ namespace SokuModManager
 
         public void RemoveSource(string sourceName)
         {
-            var targetSource = sourceConfigs.FirstOrDefault(x => x.Name == sourceName);
+            var targetSource = ConfigList.FirstOrDefault(x => x.Name == sourceName);
             if (targetSource != null)
             {
-                sourceConfigs.Remove(targetSource);
-                SaveSourceConfigs();
+                ConfigList.Remove(targetSource);
+                Save();
             }
             else
             {
@@ -87,13 +82,13 @@ namespace SokuModManager
         }
 
 
-        public void ClearSource()
+        public void Clear()
         {
-            sourceConfigs.Clear();
-            SaveSourceConfigs();
+            ConfigList.Clear();
+            Save();
         }
 
-        public void RefreshSourceConfigs()
+        public void Refresh()
         {
             try
             {
@@ -101,26 +96,26 @@ namespace SokuModManager
                 if (File.Exists(filePath))
                 {
                     string json = File.ReadAllText(filePath);
-                    sourceConfigs = JsonSerializer.Deserialize<List<SourceConfigModel>>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }) ?? new List<SourceConfigModel>();
+                    ConfigList = JsonSerializer.Deserialize<List<SourceConfigModel>>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }) ?? new List<SourceConfigModel>();
                 }
                 else
                 {
-                    sourceConfigs = new List<SourceConfigModel>();
+                    ConfigList = new List<SourceConfigModel>();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading sources: {ex.Message}");
-                sourceConfigs = new List<SourceConfigModel>();
+                ConfigList = new List<SourceConfigModel>();
             }
         }
 
-        private void SaveSourceConfigs()
+        private void Save()
         {
             try
             {
                 string filePath = Common.GetFilePath(SOURCE_FILE_NAME);
-                string json = JsonSerializer.Serialize(sourceConfigs);
+                string json = JsonSerializer.Serialize(ConfigList);
                 File.WriteAllText(filePath, json);
             }
             catch (Exception ex)

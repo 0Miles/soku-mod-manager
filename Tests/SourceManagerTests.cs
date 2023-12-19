@@ -18,8 +18,8 @@ namespace Tests
             var sourceManager = new SourceManager(sourceConfigs);
 
             // Act
-            await sourceManager.FetchSources();
-            var sources = sourceManager.Sources;
+            await sourceManager.FetchSourceList();
+            var sources = sourceManager.SourceList;
 
             // Assert
             Assert.IsNotNull(sources);
