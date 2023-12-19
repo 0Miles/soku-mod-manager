@@ -36,6 +36,12 @@ namespace SokuModManager
 
         private ModManager ModManager { get; set; }
 
+        public Updater(ModManager modManager)
+        {
+            ClearUpdateTempDir();
+            ModManager = modManager;
+        }
+
         private void ClearUpdateTempDir()
         {
             try
@@ -47,12 +53,6 @@ namespace SokuModManager
             }
             catch { }
             Directory.CreateDirectory(sokuModUpdateTempDirPath);
-        }
-
-        public Updater(ModManager modManager)
-        {
-            ClearUpdateTempDir();
-            ModManager = modManager;
         }
 
         public async Task<List<UpdateResultModel>> ExecuteUpdates(List<UpdateFileInfoModel> selectedUpdates)
