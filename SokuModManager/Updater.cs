@@ -36,6 +36,11 @@ namespace SokuModManager
 
         private ModManager ModManager { get; set; }
 
+        public Updater(string? sokuDirFullPath = null)
+        {
+            ClearUpdateTempDir();
+            ModManager = new ModManager(sokuDirFullPath);
+        }
         public Updater(ModManager modManager)
         {
             ClearUpdateTempDir();
@@ -124,6 +129,7 @@ namespace SokuModManager
                         continue;
                     }
 
+                    ModManager.Refresh();
                     var modInfo = ModManager.GetModInfoByModName(updateFileInfo.Name) ?? ModManager.GetModInfoByModFileName(updateFileInfo.FileName);
                     if (modInfo == null || !File.Exists(modInfo.FullPath))
                     {
